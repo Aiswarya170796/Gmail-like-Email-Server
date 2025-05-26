@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h2>Send Email</h2>
+        <!-- <form method="POST" action="{% url 'send_email' %}"> -->
+            <form id="sendEmailForm" method="post" enctype="multipart/form-data"></form>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="recipient">Recipient (Separate emails with commas)</label>
+                <input type="text" class="form-control" id="recipient" name="recipient" required>
+            </div>
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" required>
+            </div>
+            <div class="form-group">
+                <label for="body">Body</label>
+                <textarea class="form-control" id="body" name="body" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="attachments">Attachments</label>
+                <input type="file" class="form-control-file" id="attachments" name="attachments" multiple>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function sendEmail() {
+            const formData = new FormData(document.getElementById('composeForm'));
+            fetch('/send_email/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Email sent successfully!');
+                    return redirect('inbox');
+                } else {
+                    alert('Failed to send email. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+                alert('Failed to send email. Please check your network connection.');
+            });
+            return false;
+        }
+    </script>
+
+</body>
+</html>
